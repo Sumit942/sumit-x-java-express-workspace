@@ -1,6 +1,6 @@
 package com.mytextile.notification.dto;
 
-import com.mytextile.notification.entity.ChannelType;
+import com.mytextile.notification.model.ChannelType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

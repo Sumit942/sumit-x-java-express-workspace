@@ -1,6 +1,6 @@
 package com.mytextile.notification.dto;
 
-import com.mytextile.notification.entity.NotificationStatus;
+import com.mytextile.notification.model.NotificationStatus;
 
 // This DTO is returned immediately after a request is accepted.
 public record NotificationResponseDto(

@@ -11,7 +11,7 @@ public interface NotificationService {
     /**
      * Accepts a notification request, saves it, and processes it asynchronously.
      */
-    NotificationResponseDto processNotification(NotificationRequestDto requestDto);
+    NotificationResponseDto sendNotification(NotificationRequestDto requestDto);
 
     /**
      * Gets a notification log by its ID.

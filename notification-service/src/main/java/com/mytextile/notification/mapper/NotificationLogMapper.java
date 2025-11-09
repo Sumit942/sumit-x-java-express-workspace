@@ -1,34 +1,25 @@
 package com.mytextile.notification.mapper;
 
 import com.mytextile.notification.dto.NotificationLogDto;
-import com.mytextile.notification.entity.NotificationLog;
-import org.springframework.stereotype.Component;
+import com.mytextile.notification.dto.NotificationRequestDto;
+import com.mytextile.notification.model.NotificationLog;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class NotificationLogMapper {
+@Mapper(componentModel = "spring")
+public interface NotificationLogMapper {
 
     /**
-     * Converts a NotificationLog Entity to its DTO representation.
+     * Converts a request DTO into a Log entity.
      */
-    public NotificationLogDto toDto(NotificationLog log) {
-        if (log == null) {
-            return null;
-        }
-
-        return new NotificationLogDto(
-            log.getLogId(),
-            log.getClientId(),
-            log.getChannel(),
-            log.getRecipient(),
-            log.getSubject(),
-            log.getBody(),
-            log.getStatus(),
-            log.getSentAt(),
-            log.getCreatedAt()
-        );
-    }
-
-    // Note: We don't have a toEntity() method because the service
-    // will construct the NotificationLog from the NotificationRequestDto,
-    // which is not a 1:1 mapping.
+    @Mapping(target = "logId", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "sentAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    NotificationLog toEntity(NotificationRequestDto dto);
+    
+    /**
+     * Converts a Log entity into its full DTO.
+     */
+    NotificationLogDto toDto(NotificationLog log);
 }

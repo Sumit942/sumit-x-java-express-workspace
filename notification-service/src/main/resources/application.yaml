@@ -1,3 +1,5 @@
+server:
+  port: 9004
 spring:
   application:
     name: notification-service
@@ -8,8 +10,11 @@ spring:
   h2:
     console:
       enabled: true
-server:
-  port: 9004
+  jpa:
+    properties:
+      hibernate.format_sql: true
+    show-sql: true
+
 
 management:
   endpoints:

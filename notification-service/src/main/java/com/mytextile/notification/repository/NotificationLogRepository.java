@@ -1,7 +1,7 @@
 // --- File: src/main/java/com/mytextile/notificationservice/repository/NotificationLogRepository.java ---
 package com.mytextile.notification.repository;
 
-import com.mytextile.notification.entity.NotificationLog;
+import com.mytextile.notification.model.NotificationLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

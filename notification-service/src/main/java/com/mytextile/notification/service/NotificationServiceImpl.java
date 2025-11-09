@@ -3,11 +3,11 @@ package com.mytextile.notification.service;
 import com.mytextile.notification.dto.NotificationLogDto;
 import com.mytextile.notification.dto.NotificationRequestDto;
 import com.mytextile.notification.dto.NotificationResponseDto;
-import com.mytextile.notification.entity.ChannelType;
-import com.mytextile.notification.entity.NotificationLog;
-import com.mytextile.notification.entity.NotificationStatus;
 import com.mytextile.notification.exception.ResourceNotFoundException;
 import com.mytextile.notification.mapper.NotificationLogMapper;
+import com.mytextile.notification.model.ChannelType;
+import com.mytextile.notification.model.NotificationLog;
+import com.mytextile.notification.model.NotificationStatus;
 import com.mytextile.notification.repository.NotificationLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,31 +30,20 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public NotificationResponseDto processNotification(NotificationRequestDto requestDto) {
-        log.info("Receiving notification request for: {}", requestDto.recipient());
+    public NotificationResponseDto sendNotification(NotificationRequestDto requestDto) {
+        log.info("Received notification request for: {}", requestDto.recipient());
 
-        // 1. Create and save the log entry in PENDING state
-        NotificationLog logEntry = new NotificationLog();
-        logEntry.setClientId(requestDto.clientId());
-        logEntry.setChannel(requestDto.channel());
-        logEntry.setRecipient(requestDto.recipient());
-        logEntry.setSubject(requestDto.subject());
-        logEntry.setBody(requestDto.body());
+        // 1. Map DTO to Entity and set status
+        NotificationLog logEntry = logMapper.toEntity(requestDto);
         logEntry.setStatus(NotificationStatus.PENDING);
 
+        // 2. Save the PENDING log. This is the end of the synchronous transaction.
         NotificationLog savedLog = logRepository.save(logEntry);
+        
+        // 3. Trigger the asynchronous processing
+        processNotificationAsync(savedLog.getLogId());
 
-        // 2. Trigger the async sending
-        if (requestDto.channel() == ChannelType.EMAIL) {
-            sendEmailAsync(savedLog);
-        } else {
-            // TODO: Implement SMS sending
-            log.warn("SMS sending not implemented. Marking as failed.");
-            savedLog.setStatus(NotificationStatus.FAILED);
-            logRepository.save(savedLog);
-        }
-
-        // 3. Return an "Accepted" response immediately
+        // 4. Return an "Accepted" response immediately to the caller
         return new NotificationResponseDto(
             savedLog.getLogId(),
             savedLog.getStatus(),
@@ -62,29 +51,48 @@ public class NotificationServiceImpl implements NotificationService {
         );
     }
 
-    @Async // This tells Spring to run this in a separate thread
+    /**
+     * This method runs in a separate thread.
+     * It needs to be public to be proxied by @Async.
+     */
+    @Async
     @Transactional
-    public void sendEmailAsync(NotificationLog logEntry) {
-        log.info("ASYNC: Processing email for log ID: {}", logEntry.getLogId());
-        try {
-            // 4. Try to send the email
-            emailSenderService.sendEmail(
-                logEntry.getRecipient(),
-                logEntry.getSubject(),
-                logEntry.getBody()
-            );
+    public void processNotificationAsync(Long logId) {
+        log.info("ASYNC: Processing notification for log ID: {}", logId);
+        
+        NotificationLog logEntry = logRepository.findById(logId)
+            .orElse(null); // Should not happen, but good to check
 
-            // 5. Update log to SENT
-            logEntry.setStatus(NotificationStatus.SENT);
-            logEntry.setSentAt(LocalDateTime.now());
+        if (logEntry == null) {
+            log.error("ASYNC: Log entry {} not found. Aborting.", logId);
+            return;
+        }
+
+        try {
+            if (logEntry.getChannel() == ChannelType.EMAIL) {
+                // 5. Try to send the email
+                emailSenderService.sendEmail(
+                    logEntry.getRecipient(),
+                    logEntry.getSubject(),
+                    logEntry.getBody()
+                );
+                
+                // 6. Update log to SENT
+                logEntry.setStatus(NotificationStatus.SENT);
+                logEntry.setSentAt(LocalDateTime.now());
+
+            } else {
+                log.warn("ASYNC: SMS channel not implemented. Marking as FAILED.");
+                logEntry.setStatus(NotificationStatus.FAILED);
+            }
 
         } catch (Exception e) {
-            log.error("ASYNC: Failed to send email for log ID: {}", logEntry.getLogId(), e);
-            // 6. Update log to FAILED
+            log.error("ASYNC: Failed to send notification for log ID: {}", logId, e);
+            // 7. Update log to FAILED
             logEntry.setStatus(NotificationStatus.FAILED);
         }
         
-        // 7. Save the final status
+        // 8. Save the final status
         logRepository.save(logEntry);
     }
 

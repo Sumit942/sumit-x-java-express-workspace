@@ -27,7 +27,7 @@ public class NotificationController {
     public ResponseEntity<NotificationResponseDto> sendNotification(
             @Valid @RequestBody NotificationRequestDto requestDto) {
         
-        NotificationResponseDto response = notificationService.processNotification(requestDto);
+        NotificationResponseDto response = notificationService.sendNotification(requestDto);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 

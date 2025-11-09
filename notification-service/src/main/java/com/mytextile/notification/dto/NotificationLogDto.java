@@ -1,7 +1,7 @@
 package com.mytextile.notification.dto;
 
-import com.mytextile.notification.entity.ChannelType;
-import com.mytextile.notification.entity.NotificationStatus;
+import com.mytextile.notification.model.ChannelType;
+import com.mytextile.notification.model.NotificationStatus;
 import java.time.LocalDateTime;
 
 // This DTO is used when a client wants to read a full notification log.
