@@ -1,4 +1,4 @@
-package com.mytextile.inventory.entity;
+package com.mytextile.inventory.model;
 
 public enum ItemType {
     RAW_MATERIAL,

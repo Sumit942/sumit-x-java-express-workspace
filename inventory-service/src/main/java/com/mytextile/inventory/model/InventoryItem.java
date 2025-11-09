@@ -1,13 +1,13 @@
-package com.mytextile.inventory.entity;
+package com.mytextile.inventory.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "inventory_items")
+@Table(name = "inventory_items", indexes = {
+    @Index(name = "idx_sku_unique", columnList = "sku", unique = true)
+})
 public class InventoryItem {
 
     @Id

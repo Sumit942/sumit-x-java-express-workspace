@@ -1,7 +1,7 @@
 package com.mytextile.inventory.controller;
 
-import com.mytextile.inventory.dto.InventoryItemDto;
-import com.mytextile.inventory.service.I_InventoryService;
+import com.mytextile.inventory.dto.*;
+import com.mytextile.inventory.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,28 +11,46 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/inventory") // Base path for all inventory-related APIs
+@RequestMapping("/api/v1/inventory")
 @RequiredArgsConstructor
 public class InventoryController {
 
-    private final I_InventoryService iInventoryService;
+    private final InventoryService inventoryService;
 
-    @PostMapping
-    public ResponseEntity<InventoryItemDto> createInventoryItem(@Valid @RequestBody InventoryItemDto inventoryItemDto) {
-        InventoryItemDto createdInventoryItem = iInventoryService.createItem(inventoryItemDto);
-        return new ResponseEntity<>(createdInventoryItem, HttpStatus.CREATED);
+    // --- Item Catalog Management ---
+
+    @PostMapping("/items")
+    public ResponseEntity<ItemDto> createItem(@Valid @RequestBody CreateItemDto dto) {
+        ItemDto newItem = inventoryService.createItem(dto);
+        return new ResponseEntity<>(newItem, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<InventoryItemDto> getClientById(@PathVariable("id") Long itemId) {
-        InventoryItemDto client = iInventoryService.getItemById(itemId);
-        return ResponseEntity.ok(client);
+    @GetMapping("/items/{sku}")
+    public ResponseEntity<ItemDto> getItemBySku(@PathVariable String sku) {
+        return ResponseEntity.ok(inventoryService.getItemBySku(sku));
     }
 
-    @GetMapping
-    public ResponseEntity<List<InventoryItemDto>> getAllClients() {
-        List<InventoryItemDto> clients = iInventoryService.getAllItems();
-        return ResponseEntity.ok(clients);
+    // --- Stock & Ledger Management ---
+
+    @PostMapping("/inward")
+    public ResponseEntity<Void> receiveRawMaterial(@Valid @RequestBody InwardRequestDto dto) {
+        inventoryService.receiveRawMaterial(dto);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED); // Accepted, processing async
     }
 
+    @PostMapping("/adjust")
+    public ResponseEntity<Void> adjustStock(@Valid @RequestBody StockAdjustmentDto dto) {
+        inventoryService.adjustStock(dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/stock/{sku}")
+    public ResponseEntity<StockLevelDto> getStockLevel(@PathVariable String sku) {
+        return ResponseEntity.ok(inventoryService.getStockLevel(sku));
+    }
+
+    @GetMapping("/history/{sku}")
+    public ResponseEntity<List<LedgerEntryDto>> getLedgerHistory(@PathVariable String sku) {
+        return ResponseEntity.ok(inventoryService.getLedgerHistory(sku));
+    }
 }

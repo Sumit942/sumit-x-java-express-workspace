@@ -1,39 +1,40 @@
-package com.mytextile.inventory.entity;
+package com.mytextile.inventory.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "inventory_ledger")
+@Table(name = "inventory_ledger", indexes = {
+    @Index(name = "idx_item_id", columnList = "itemId")
+})
 public class InventoryLedger {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ledgerId;
 
-    @Column(name = "item_id", nullable = false)
+    @Column(nullable = false)
     private Long itemId; // Logical reference to InventoryItem
 
-    @Column(name = "order_id")
+    @Column
     private Long orderId; // Logical reference to Order Service
 
-    @Column(name = "client_id")
+    @Column
     private Long clientId; // Logical reference to Client Service
 
+    // Positive for stock IN, Negative for stock OUT
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal quantity;
+    private BigDecimal quantity; 
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type", nullable = false)
+    @Column(nullable = false)
     private TransactionType transactionType;
 
     @CreationTimestamp
-    @Column(name = "transaction_date", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime transactionDate;
 }
