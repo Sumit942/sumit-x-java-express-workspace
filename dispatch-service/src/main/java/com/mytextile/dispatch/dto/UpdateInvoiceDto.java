@@ -2,7 +2,8 @@ package com.mytextile.dispatch.dto;
 // (As provided before)
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
-public record CreateInvoiceRequestDto(
-    @NotNull Long shipmentId,
-    @NotNull @Positive BigDecimal amount
+import java.time.LocalDate;
+public record UpdateInvoiceDto(
+    @NotNull @Positive BigDecimal amount,
+    @NotNull LocalDate dueDate
 ) {}

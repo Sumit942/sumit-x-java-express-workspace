@@ -1,2 +1,2 @@
-package com.mytextile.dispatch.entity;
+package com.mytextile.dispatch.model;
 public enum ShipmentStatus { PENDING, SHIPPED }

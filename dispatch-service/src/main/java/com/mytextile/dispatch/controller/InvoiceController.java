@@ -2,6 +2,7 @@ package com.mytextile.dispatch.controller;
 
 import com.mytextile.dispatch.dto.CreateInvoiceRequestDto;
 import com.mytextile.dispatch.dto.InvoiceResponseDto;
+import com.mytextile.dispatch.dto.UpdateInvoiceDto;
 import com.mytextile.dispatch.service.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,15 +27,36 @@ public class InvoiceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<InvoiceResponseDto> getInvoiceById(@PathVariable("id") Long invoiceId) {
-        InvoiceResponseDto invoiceDto = invoiceService.getInvoiceById(invoiceId);
-        return ResponseEntity.ok(invoiceDto);
+        return ResponseEntity.ok(invoiceService.getInvoiceById(invoiceId));
     }
 
     @GetMapping("/by-shipment/{shipmentId}")
     public ResponseEntity<InvoiceResponseDto> getInvoiceByShipmentId(
             @PathVariable Long shipmentId) {
         
-        InvoiceResponseDto invoiceDto = invoiceService.getInvoiceForShipment(shipmentId);
-        return ResponseEntity.ok(invoiceDto);
+        return ResponseEntity.ok(invoiceService.getInvoiceForShipment(shipmentId));
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<InvoiceResponseDto> updateDraftInvoice(
+            @PathVariable("id") Long invoiceId,
+            @Valid @RequestBody UpdateInvoiceDto updateDto) {
+        
+        InvoiceResponseDto updatedInvoice = invoiceService.updateDraftInvoice(invoiceId, updateDto);
+        return ResponseEntity.ok(updatedInvoice);
+    }
+
+    @PostMapping("/{id}/send")
+    public ResponseEntity<InvoiceResponseDto> sendInvoice(@PathVariable("id") Long invoiceId) {
+        InvoiceResponseDto sentInvoice = invoiceService.sendInvoice(invoiceId);
+        return ResponseEntity.ok(sentInvoice);
+    }
+
+    @PostMapping("/{id}/void")
+    public ResponseEntity<InvoiceResponseDto> voidSentInvoice(
+            @PathVariable("id") Long invoiceId) {
+        
+        InvoiceResponseDto voidedInvoice = invoiceService.voidSentInvoice(invoiceId);
+        return ResponseEntity.ok(voidedInvoice);
     }
 }

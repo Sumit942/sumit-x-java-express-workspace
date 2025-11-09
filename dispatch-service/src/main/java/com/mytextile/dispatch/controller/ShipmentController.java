@@ -26,7 +26,6 @@ public class ShipmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ShipmentResponseDto> getShipmentById(@PathVariable("id") Long shipmentId) {
-        ShipmentResponseDto shipmentDto = shipmentService.getShipmentById(shipmentId);
-        return ResponseEntity.ok(shipmentDto);
+        return ResponseEntity.ok(shipmentService.getShipmentById(shipmentId));
     }
 }

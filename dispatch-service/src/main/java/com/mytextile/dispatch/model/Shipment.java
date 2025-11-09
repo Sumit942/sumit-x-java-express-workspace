@@ -1,4 +1,4 @@
-package com.mytextile.dispatch.entity;
+package com.mytextile.dispatch.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,17 +15,17 @@ public class Shipment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shipmentId;
 
-    @Column(name = "order_id", nullable = false)
-    private Long orderId; // Logical reference
+    @Column(nullable = false)
+    private Long orderId;
 
-    @Column(name = "client_id", nullable = false)
-    private Long clientId; // Logical reference
+    @Column(nullable = false)
+    private Long clientId;
 
-    @Column(name = "challan_number", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String challanNumber;
 
     @Lob
-    @Column(name = "shipping_address", nullable = false)
+    @Column(nullable = false)
     private String shippingAddress;
 
     @Column(name = "dispatch_date")
@@ -35,7 +35,6 @@ public class Shipment {
     @Column(nullable = false)
     private ShipmentStatus status = ShipmentStatus.PENDING;
 
-    // Real 1:N relationship with ShipmentItem
     @OneToMany(
         mappedBy = "shipment",
         cascade = CascadeType.ALL,
@@ -43,7 +42,9 @@ public class Shipment {
     )
     private List<ShipmentItem> items = new ArrayList<>();
 
+    // Helper method
     public void addItem(ShipmentItem item) {
-        this.items.add(item);
+        items.add(item);
+        item.setShipment(this);
     }
 }

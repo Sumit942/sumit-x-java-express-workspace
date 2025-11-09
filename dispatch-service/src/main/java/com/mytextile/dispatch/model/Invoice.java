@@ -1,4 +1,4 @@
-package com.mytextile.dispatch.entity;
+package com.mytextile.dispatch.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,12 +14,11 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long invoiceId;
 
-    // Real 1:1 relationship with a Shipment
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipment_id", nullable = false, unique = true)
     private Shipment shipment;
 
-    @Column(name = "invoice_number", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String invoiceNumber;
 
     @Column(nullable = false, precision = 10, scale = 2)
