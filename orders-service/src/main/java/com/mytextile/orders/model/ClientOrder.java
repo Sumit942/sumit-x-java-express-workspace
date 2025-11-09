@@ -1,14 +1,12 @@
-package com.mytextile.orders.entity;
+package com.mytextile.orders.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "orders")
 public class ClientOrder {
@@ -17,7 +15,6 @@ public class ClientOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    // Logical reference to Client Service. Not a @ManyToOne relationship.
     @Column(name = "client_id", nullable = false)
     private Long clientId;
 
@@ -27,7 +24,7 @@ public class ClientOrder {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OrderStatus status = OrderStatus.AWAITING_MATERIAL;
+    private OrderStatus status;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

@@ -1,3 +1,5 @@
+server:
+  port: 9002
 spring:
   application:
     name: orders-service
@@ -5,11 +7,26 @@ spring:
     username: sa
     url: jdbc:h2:mem:testdb
     password:
+  # JPA/Hibernate
+  jpa:
+    show-sql: true
   h2:
     console:
       enabled: true
-server:
-  port: 9002
+  # Kafka Producer (for sending OrderCancelledEvent)
+  kafka:
+    bootstrap-servers: localhost:9012
+    consumer:
+      group-id: order-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      # This is CRITICAL for deserializing event DTOs from other services
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
 
 management:
   endpoints:
