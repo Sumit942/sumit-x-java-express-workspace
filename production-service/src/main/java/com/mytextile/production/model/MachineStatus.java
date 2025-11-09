@@ -1,4 +1,4 @@
-package com.mytextile.production.entity;
+package com.mytextile.production.model;
 
 public enum MachineStatus {
     AVAILABLE,

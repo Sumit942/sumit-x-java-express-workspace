@@ -1,88 +1,25 @@
 package com.mytextile.production.mapper;
 
+import com.mytextile.production.dto.CreateProductionJobInputDto;
 import com.mytextile.production.dto.ProductionJobDto;
 import com.mytextile.production.dto.ProductionJobInputDto;
-import com.mytextile.production.entity.ProductionJob;
-import com.mytextile.production.entity.ProductionJobInput;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
+import com.mytextile.production.model.Machine;
+import com.mytextile.production.model.ProductionJob;
+import com.mytextile.production.model.ProductionJobInput;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import java.util.List;
-import java.util.Objects;
+@Mapper(componentModel = "spring")
+public interface ProductionJobMapper {
 
-@Component
-public class ProductionJobMapper {
+    ProductionJobInputDto toInputDto(ProductionJobInput input);
 
-    public ProductionJobInputDto toDto(ProductionJobInput jobInput) {
-        if (Objects.isNull(jobInput)) {
-            return null;
-        }
+    @Mapping(target = "machineName", source = "machine")
+    ProductionJobDto toDto(ProductionJob job);
 
-        return new ProductionJobInputDto(
-                jobInput.getJobInputId(),
-                jobInput.getProductionJob(),
-                jobInput.getInputItemSku(),
-                jobInput.getQuantity()
-        );
-    }
-
-    public ProductionJobDto toDto(ProductionJob job) {
-        if (Objects.isNull(job)) {
-            return null;
-        }
-
-        List<ProductionJobInputDto> jobInputDtoList = null;
-        if (!CollectionUtils.isEmpty(job.getInputs())) {
-            jobInputDtoList = job.getInputs()
-                    .stream()
-                    .map(this::toDto)
-                    .toList();
-        }
-
-        return new ProductionJobDto(
-                job.getJobId(),
-                job.getOrderId(),
-                job.getMachine(),
-                jobInputDtoList,
-                job.getOutputItemSku(),
-                job.getActualOutputQuantity(),
-                job.getStatus()
-        );
-    }
-
-    public ProductionJob toEntity(ProductionJobDto dto) {
-        if (Objects.isNull(dto)) {
-            return null;
-        }
-
-        List<ProductionJobInput> inputList = null;
-        if (!CollectionUtils.isEmpty(dto.inputs())) {
-            inputList = dto.inputs()
-                    .stream()
-                    .map(this::toJobInputEntity)
-                    .toList();
-        }
-
-        ProductionJob job = new ProductionJob();
-        job.setMachine(dto.machine());
-        job.setInputs(inputList);
-        job.setStatus(dto.status());
-        job.setOrderId(dto.orderId());
-        job.setOutputItemSku(dto.outputItemSku());
-        job.setActualOutputQuantity(dto.actualOutputQuantity());
-
-        return job;
-    }
-
-    public ProductionJobInput toJobInputEntity(ProductionJobInputDto dto) {
-        if (Objects.isNull(dto)) {
-            return null;
-        }
-        ProductionJobInput jobInput = new ProductionJobInput();
-        jobInput.setProductionJob(dto.productionJob());
-        jobInput.setInputItemSku(dto.inputItemSku());
-        jobInput.setQuantity(dto.quantity());
-
-        return jobInput;
+    ProductionJobInput toInputEntity(CreateProductionJobInputDto inputDto);
+    
+    default String fromMachine(Machine machine) {
+        return (machine != null) ? machine.getName() : null;
     }
 }

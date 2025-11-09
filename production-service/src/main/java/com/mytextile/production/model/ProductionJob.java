@@ -1,16 +1,14 @@
-package com.mytextile.production.entity;
+package com.mytextile.production.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "production_jobs")
 public class ProductionJob {
@@ -20,7 +18,7 @@ public class ProductionJob {
     private Long jobId;
 
     @Column(name = "order_id", nullable = false)
-    private Long orderId; // Logical reference to Order Service
+    private Long orderId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "machine_id")
@@ -34,7 +32,7 @@ public class ProductionJob {
     private List<ProductionJobInput> inputs = new ArrayList<>();
 
     @Column(name = "output_item_sku", nullable = false)
-    private String outputItemSku; // e.g., "FABRIC-X-CHECKERED"
+    private String outputItemSku;
 
     @Column(name = "actual_output_quantity", precision = 10, scale = 2)
     private BigDecimal actualOutputQuantity;
@@ -50,7 +48,7 @@ public class ProductionJob {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
     
-    // Helper method to add inputs
+    // Helper method for bidirectional relationship
     public void addInput(ProductionJobInput input) {
         inputs.add(input);
         input.setProductionJob(this);

@@ -1,37 +1,52 @@
 package com.mytextile.production.controller;
 
+import com.mytextile.production.dto.CompleteJobRequestDto;
+import com.mytextile.production.dto.CreateProductionJobRequestDto;
 import com.mytextile.production.dto.ProductionJobDto;
-import com.mytextile.production.service.IProductionJobService;
+import com.mytextile.production.service.ProductionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/vi/jobs")
+@RequestMapping("/api/v1/production-jobs")
 @RequiredArgsConstructor
 public class ProductionJobController {
 
-    private final IProductionJobService jobService;
+    private final ProductionService productionService;
 
     @PostMapping
-    public ResponseEntity<ProductionJobDto> createJob(@Valid @RequestBody ProductionJobDto jobDto) {
-        ProductionJobDto createdJob = jobService.createJob(jobDto);
+    public ResponseEntity<ProductionJobDto> createProductionJob(
+            @Valid @RequestBody CreateProductionJobRequestDto requestDto) {
+        
+        ProductionJobDto createdJob = productionService.createProductionJob(requestDto);
         return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductionJobDto> getJobById(@Valid @RequestBody Long jobId) {
-        ProductionJobDto job = jobService.getJobById(jobId);
-        return ResponseEntity.ok(job);
+    @PostMapping("/{id}/start")
+    public ResponseEntity<ProductionJobDto> startProductionJob(
+            @PathVariable("id") Long jobId) {
+        
+        ProductionJobDto startedJob = productionService.startProductionJob(jobId);
+        return ResponseEntity.ok(startedJob);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ProductionJobDto>> getAllJobs() {
-        List<ProductionJobDto> jobs = jobService.getAllJobs();
-        return ResponseEntity.ok(jobs);
+    @PostMapping("/{id}/complete")
+    public ResponseEntity<ProductionJobDto> completeProductionJob(
+            @PathVariable("id") Long jobId,
+            @Valid @RequestBody CompleteJobRequestDto requestDto) {
+        
+        ProductionJobDto completedJob = productionService.completeProductionJob(jobId, requestDto);
+        return ResponseEntity.ok(completedJob);
+    }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<ProductionJobDto> cancelProductionJob(
+            @PathVariable("id") Long jobId) {
+        
+        ProductionJobDto cancelledJob = productionService.cancelProductionJob(jobId);
+        return ResponseEntity.ok(cancelledJob);
     }
 }
