@@ -42,4 +42,8 @@ public class Shipment {
         orphanRemoval = true
     )
     private List<ShipmentItem> items = new ArrayList<>();
+
+    public void addItem(ShipmentItem item) {
+        this.items.add(item);
+    }
 }
