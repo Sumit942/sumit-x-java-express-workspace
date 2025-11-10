@@ -53,4 +53,36 @@ public class ClientServiceImpl implements ClientService {
                 .map(clientMapper::toDto) // Convert each client to a DTO
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public ClientDto updateClient(Long clientId, ClientDto clientDto) {
+        // 1. Find the existing client
+        Client existingClient = clientRepository.findById(clientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Client", "id", clientId));
+
+        // 2. Use the mapper to update the entity's fields
+        clientMapper.updateEntityFromDto(existingClient, clientDto);
+
+        // 3. Save the updated entity
+        // JPA will handle the update for both Client and ClientBankDetails
+        Client savedClient = clientRepository.save(existingClient);
+
+        // 4. Return the updated DTO
+        return clientMapper.toDto(savedClient);
+    }
+
+    @Override
+    @Transactional // This is a write operation
+    public void deleteClient(Long clientId) {
+        // 1. Check if the client exists
+        if (!clientRepository.existsById(clientId)) {
+            throw new ResourceNotFoundException("Client", "id", clientId);
+        }
+
+        // 2. Delete the client
+        // The CascadeType.ALL and orphanRemoval=true on the Client entity
+        // will automatically delete the associated ClientBankDetails.
+        clientRepository.deleteById(clientId);
+    }
 }

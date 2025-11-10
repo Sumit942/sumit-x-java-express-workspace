@@ -35,4 +35,28 @@ public class ClientController {
         List<ClientDto> clients = clientService.getAllClients();
         return ResponseEntity.ok(clients);
     }
+
+    /**
+     * PUT /api/v1/clients/{id}
+     * Updates an existing client
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<ClientDto> updateClient(
+            @PathVariable("id") Long clientId,
+            @Valid @RequestBody ClientDto clientDto) {
+
+        ClientDto updatedClient = clientService.updateClient(clientId, clientDto);
+        return ResponseEntity.ok(updatedClient);
+    }
+
+    /**
+     * DELETE /api/v1/clients/{id}
+     * Deletes a client
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClient(@PathVariable("id") Long clientId) {
+        clientService.deleteClient(clientId);
+        // Return 204 No Content, which is standard for a successful delete
+        return ResponseEntity.noContent().build();
+    }
 }

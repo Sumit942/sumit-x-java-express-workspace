@@ -11,6 +11,8 @@ public interface ClientService {
     ClientDto getClientById(Long clientId);
     
     List<ClientDto> getAllClients();
-    
-    // You would also add methods for update and delete
+
+    ClientDto updateClient(Long clientId, ClientDto clientDto);
+
+    void deleteClient(Long clientId);
 }
