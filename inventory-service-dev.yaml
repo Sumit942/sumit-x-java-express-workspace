@@ -1,0 +1,41 @@
+server:
+  port: 9001
+spring:
+  application:
+    name: inventory-service
+  # Spring Datasource
+  datasource:
+    username: sa
+    url: jdbc:h2:mem:testdb
+    password:
+  # JPA/Hibernate
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+  h2:
+    console:
+      enabled: true
+  # Kafka Producer
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: inventory-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      # This is CRITICAL for deserializing event DTOs
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
