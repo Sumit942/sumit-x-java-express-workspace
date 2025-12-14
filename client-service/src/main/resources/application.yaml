@@ -1,3 +1,12 @@
+build:
+  version: 1.0.0
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+server:
+  port: 9006
 spring:
   application:
     name: client-service
@@ -12,11 +21,7 @@ spring:
   h2:
     console:
       enabled: true
-server:
-  port: 9006
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+  profiles:
+    active: dev
+  config:
+    import: "configserver:http://localhost:9007/"

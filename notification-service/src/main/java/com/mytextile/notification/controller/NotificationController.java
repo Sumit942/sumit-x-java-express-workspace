@@ -3,9 +3,11 @@ package com.mytextile.notification.controller;
 import com.mytextile.notification.dto.NotificationLogDto;
 import com.mytextile.notification.dto.NotificationRequestDto;
 import com.mytextile.notification.dto.NotificationResponseDto;
+import com.mytextile.notification.properties.bean.BuildInfo;
 import com.mytextile.notification.service.NotificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,4 +50,12 @@ public class NotificationController {
         List<NotificationLogDto> logs = notificationService.getLogsByClientId(clientId);
         return ResponseEntity.ok(logs);
     }
+
+    @GetMapping("/build-info")
+    public String getBuildVersion() {
+        return buildInfo.getBuildVersion();
+    }
+
+    @Autowired
+    private BuildInfo buildInfo;
 }

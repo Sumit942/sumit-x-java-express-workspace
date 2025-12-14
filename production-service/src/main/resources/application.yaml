@@ -1,6 +1,10 @@
 spring:
   application:
     name: production-service
+  profiles:
+    active: dev
+  config:
+    import: "configserver:http://localhost:9007/"
   # Spring Datasource configuration
   datasource:
     username: sa

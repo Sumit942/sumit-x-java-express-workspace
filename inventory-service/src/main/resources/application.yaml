@@ -3,6 +3,10 @@ server:
 spring:
   application:
     name: inventory-service
+  profiles:
+    active: dev
+  config:
+    import: "configserver:http://localhost:9007/"
   # Spring Datasource
   datasource:
     username: sa

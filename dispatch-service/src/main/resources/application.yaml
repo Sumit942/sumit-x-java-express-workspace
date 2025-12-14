@@ -2,6 +2,12 @@ server:
   port: 9005
 
 spring:
+  application:
+    name: dispatch-service
+  profiles:
+    active: dev
+  config:
+    import: "configserver:http://localhost:9007/"
   datasource:
     url: jdbc:h2:mem:testdb
     username: sa

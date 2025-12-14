@@ -5,6 +5,9 @@ import com.mytextile.client.dto.ClientDto;
 import com.mytextile.client.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,4 +62,20 @@ public class ClientController {
         // Return 204 No Content, which is standard for a successful delete
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/build-info")
+    public String getBuildVersion() {
+        return buildVersion;
+    }
+
+    @GetMapping("/java-version")
+    public String getJavaVersion() {
+        return environment.getProperty("JAVA_HOME");
+    }
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    @Autowired
+    private Environment environment;
 }
