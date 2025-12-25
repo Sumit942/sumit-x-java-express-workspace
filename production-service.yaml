@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: production-service
+  profiles:
+    active: dev
+  config:
+    import: "configserver:http://localhost:9007/"
+  # Spring Datasource configuration
+  datasource:
+    url: jdbc:mysql://localhost:3306/textile_db
+    username: root
+    password: 12345678
+  # JPA/Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.format_sql: true
+    show-sql: true
+
+  #Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9013
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+server:
+  port: 9003
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  info:
+    env:
+      enabled: true
+eureka:
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:9008/eureka
+info:
+  app:
+    name: "production-service"
+    description: "Production service application"
+    version: "1.0.0"
