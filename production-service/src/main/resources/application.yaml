@@ -7,18 +7,17 @@ spring:
     import: "configserver:http://localhost:9007/"
   # Spring Datasource configuration
   datasource:
-    username: sa
-    url: jdbc:h2:mem:testdb
-    password:
+    url: jdbc:mysql://localhost:3306/textile_db
+    username: root
+    password: 12345678
   # JPA/Hibernate
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate.format_sql: true
     show-sql: true
-  # h2 console
-  h2:
-    console:
-      enabled: true
+
 #Kafka Configuration
   kafka:
     bootstrap-servers: localhost:9013
@@ -33,3 +32,17 @@ management:
     web:
       exposure:
         include: '*'
+  info:
+    env:
+      enabled: true
+eureka:
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:9008/eureka
+info:
+  app:
+    name: "production-service"
+    description: "Production service application"
+    version: "1.0.0"
