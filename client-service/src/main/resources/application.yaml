@@ -35,6 +35,6 @@ eureka:
       defaultZone: http://localhost:9008/eureka
 info:
   app:
-    name: "client-service"
+    name: "client-servicssse"
     description: "Client service application"
     version: "1.0.0"

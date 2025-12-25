@@ -1,0 +1,23 @@
+server:
+  port: 9007
+
+spring:
+  application:
+    name: configserver
+  profiles:
+    active: dev
+  cloud:
+    config:
+      server:
+        enabled: true
+        git:
+          uri: https://github.com/Sumit942/configserver
+          default-label: main
+          timeout: 60
+          force-pull: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
