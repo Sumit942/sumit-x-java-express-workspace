@@ -1,0 +1,23 @@
+management:
+    endpoints:
+        web:
+            exposure:
+                include: '*'
+server:
+    port: 9006
+spring:
+    application:
+        name: client-service
+    config:
+        import: "configserver:http://localhost:9007/"
+    datasource:
+        password: 12345678
+        url: jdbc:mysql://localhost:3306/textile_db
+        username: root
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                format_sql: true
+        show-sql: true
