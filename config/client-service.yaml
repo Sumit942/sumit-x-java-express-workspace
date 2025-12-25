@@ -23,8 +23,6 @@ spring:
     properties:
       hibernate.format_sql: true
     show-sql: true
-  profiles:
-    active: dev
   config:
     import: "configserver:http://localhost:9007/"
 eureka:

@@ -1,47 +1,39 @@
 server:
-  port: 9005
-
+  port: 9002
 spring:
   application:
-    name: dispatch-service
-  profiles:
-    active: dev
+    name: orders-service
   config:
     import: "configserver:http://localhost:9007/"
   datasource:
     url: jdbc:mysql://localhost:3306/textile_db
     username: root
     password: 12345678
-
+  # JPA/Hibernate
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-
-
+  # Kafka Producer (for sending OrderCancelledEvent)
   kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    bootstrap-servers: localhost:9012
     consumer:
-      group-id: dispatch-service-group
+      group-id: order-service-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      # This is CRITICAL for deserializing event DTOs from other services
       properties:
         spring:
           json:
             trusted:
-              packages: "*"
+              packages: '*'
 
-# Custom application properties
-app:
-  client-service:
-    url: http://localhost:9006
-  notification-service:
-    url: http://localhost:9004
 management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
   info:
     env:
       enabled: true
@@ -53,6 +45,6 @@ eureka:
       defaultZone: http://localhost:9008/eureka
 info:
   app:
-    name: "dispatch-service"
-    description: "Dispatch service application"
+    name: "order-service"
+    description: "Order service application"
     version: "1.0.0"
